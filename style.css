@@ -1,0 +1,11 @@
+:root {
+    font-family: sans-serif;
+}
+
+details {
+    font-size: 14px;
+}
+
+details#route {
+    text-indent: 50px;
+}
