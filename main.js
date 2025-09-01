@@ -62,30 +62,29 @@ const parse = async (data) => {
                     location: location,
                     mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
                 });
-            }
-            
-            // bus
-            if (!buses.hasOwnProperty(nbus[1])) {
-                buses[nbus[1]] = [];
+            } else {
+                // bus
+                if (!buses.hasOwnProperty(nbus[1])) {
+                    buses[nbus[1]] = [];
+                }
+
+                buses[nbus[1]].push({
+                    busnr: nbus[5],
+                    speed: nbus[4],
+                    location: location,
+                    mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
+                });
             }
 
-            buses[nbus[1]].push({
-                busnr: nbus[5],
+            /*buses.push({
+                type: nbus[0] == 1 ? "Trolleybus" : "Bus",
+                route: nbus[1],            
+                north: (parseInt(nbus[3]) / 1000000).toString(),
+                east: (parseInt(nbus[2]) / 1000000).toString(),
                 speed: nbus[4],
-                location: location,
-                mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
-            });
+                busnr: nbus[5]
+            });*/
         }
-
-        /*buses.push({
-            type: nbus[0] == 1 ? "Trolleybus" : "Bus",
-            route: nbus[1],            
-            north: (parseInt(nbus[3]) / 1000000).toString(),
-            east: (parseInt(nbus[2]) / 1000000).toString(),
-            speed: nbus[4],
-            busnr: nbus[5]
-        });*/
-
     }
 
     return [trolleybuses, buses, boats];
@@ -97,6 +96,7 @@ let boat = document.getElementById("boat");
 
 const updateList = async (data) => {
     const [trolleybuses, buses, boats] = await parse(data);
+    console.log(trolleybuses, buses, boats);
     
     Object.entries(trolleybuses).forEach(([key, value]) => {
         let details = document.createElement("details");
