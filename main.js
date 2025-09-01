@@ -25,6 +25,7 @@ const parse = async (data) => {
     let split = data.split("\n");
     let trolleybuses = {};
     let buses = {};
+    let boats = {};
     
     const locationPromises = split.map(async (bus) => {
         const nbus = bus.split(",");
@@ -38,7 +39,6 @@ const parse = async (data) => {
 
         if (nbus[0] == 1) {
             // trolleybus
-            
             if (!trolleybuses.hasOwnProperty(nbus[1])) {
                 trolleybuses[nbus[1]] = [];
             }
@@ -50,8 +50,22 @@ const parse = async (data) => {
                 mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
             });
         } else if (nbus[0] == 2) {
-            // buss
-             if (!buses.hasOwnProperty(nbus[1])) {
+            // boat
+            if (nbus[1].startsWith("L")) {
+                if (!boats.hasOwnProperty(nbus[1])) {
+                    boats[nbus[1]] = [];
+                }
+
+                boats[nbus[1]].push({
+                    busnr: nbus[5],
+                    speed: nbus[4],
+                    location: location,
+                    mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
+                });
+            }
+            
+            // bus
+            if (!buses.hasOwnProperty(nbus[1])) {
                 buses[nbus[1]] = [];
             }
 
@@ -74,21 +88,22 @@ const parse = async (data) => {
 
     }
 
-    return [trolleybuses, buses];
+    return [trolleybuses, buses, boats];
 };
 
 let trolleybus = document.getElementById("trolleybus");
 let bus = document.getElementById("bus");
+let boat = document.getElementById("boat");
 
 const updateList = async (data) => {
-    const [trolleybuses, buses] = await parse(data);
+    const [trolleybuses, buses, boats] = await parse(data);
     
     Object.entries(trolleybuses).forEach(([key, value]) => {
         let details = document.createElement("details");
         details.id = "route";
 
         let summary = document.createElement("summary");
-        summary.innerText = "Route " + key + ` (amount trolleybuses driving the route: ${value.length})`;
+        summary.innerText = "Route " + key + ` (amount of trolleybuses driving this route: ${value.length})`;
         details.appendChild(summary);
         
         let ul = document.createElement("ul");
@@ -115,7 +130,7 @@ const updateList = async (data) => {
         details.id = "route";
 
         let summary = document.createElement("summary");
-        summary.innerText = "Route " + key + ` (amount buses driving the route: ${value.length})`;
+        summary.innerText = "Route " + key + ` (amount of buses driving this route: ${value.length})`;
         details.appendChild(summary);
         
         let ul = document.createElement("ul");
@@ -137,6 +152,34 @@ const updateList = async (data) => {
         bus.appendChild(details);
     });
 
+    Object.entries(boats).forEach(([key, value]) => {
+        let details = document.createElement("details");
+        details.id = "route";
+
+        let summary = document.createElement("summary");
+        summary.innerText = "Route " + key + ` (amount of boats driving this route: ${value.length})`;
+        details.appendChild(summary);
+        
+        let ul = document.createElement("ul");
+
+        value.forEach(_bus => {
+            let li = document.createElement("li");
+            let url = document.createElement("a");
+            
+            li.innerText = `Boat nr. ${_bus.busnr} | Speed: ${_bus.speed} km/h | Location: ${_bus.location} |`;
+            li.innerHTML += "<br>"
+            
+            url.href = _bus.mapurl;
+            url.innerText = "Bus on map";
+            
+            li.appendChild(url);
+            ul.appendChild(li);
+        });
+        details.appendChild(ul);
+        boat.appendChild(details);
+    });
+
+
 };
 
 const refetch = async () => {
@@ -148,6 +191,12 @@ const refetch = async () => {
             Buses
         </summary>
 `;
+    boat.innerHTML = `<summary>
+            Boats
+        </summary>
+`;
+
+
     fetch("https://corsproxy.io?url=" + encodeURIComponent("https://www.stops.lt/vilnius/gps.txt"))
     .then(async response => {
         if (!response.ok) {
