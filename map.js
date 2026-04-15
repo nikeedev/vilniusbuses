@@ -1,5 +1,3 @@
-const apikey = "AIzaSyAzzTZR_VFHD02bTGOkaZtRJxr_hzdCy2E";
-
 const urlParams = new URLSearchParams(window.location.search);
 
 if (!window.location.href.includes("?")) {
@@ -20,26 +18,16 @@ if (window.location.search.indexOf("lat") !== -1 && window.location.search.index
 let map;
 
 async function initMap() {
-    // The location of Uluru
-    const position = { lat: lat, lng: long };
-    // Request needed libraries.
-    //@ts-ignore
-    const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    
+    map = L.map('map').setView([lat, long], 16);
 
-    // The map, centered at Uluru
-    map = new Map(document.getElementById("map"), {
-        zoom: 13,
-        center: position,
-        mapId: "DEMO_MAP_ID",
-    });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
 
-    // The marker, positioned at Uluru
-    const marker = new AdvancedMarkerElement({
-        map: map,
-        position: position,
-        title: `Route ${route}`,
-  });
+    let marker = L.marker([lat, long]).addTo(map);
+    marker.bindPopup(`Route <b>${route}</b>`).openPopup();
 }
 
 initMap();
