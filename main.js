@@ -1,20 +1,22 @@
 // type,route,east,north,speed,na,busnr,na,na
 
-const apikey = "AIzaSyAzzTZR_VFHD02bTGOkaZtRJxr_hzdCy2E";
-
 async function getLocation(nbus) {
     const lat = parseInt(nbus[3]) / 1000000;
-    const lng = parseInt(nbus[2]) / 1000000;
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apikey}`;
+    const long = parseInt(nbus[2]) / 1000000;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${long}&format=json`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            }
+        });
         if (!response.ok) {
-            console.error(`Error getting location from ${nbus[1]}, location ${lat}, ${lng}`);
+            console.error(`Error getting location from ${nbus[1]}, location ${lat}, ${long}`);
             return null;
         }
-        const data = await response.json();
-        return data.results[0]?.formatted_address || "Unknown location";
+         const data = await response.json();
+        return data.results[0]?.name || "Unknown location";
     } catch (err) {
         console.error("Fetch error:", err);
         return null;

@@ -9,7 +9,7 @@ let lat, long, route;
 if (window.location.search.indexOf("lat") !== -1 && window.location.search.indexOf("long") !== -1 && window.location.search.indexOf("route") !== -1) {
     lat = parseInt(urlParams.get("lat")) / 1000000;
     long = parseInt(urlParams.get("long")) / 1000000;
-    route = parseInt(urlParams.get("route")) / 1000000;
+    route = parseInt(urlParams.get("route"));
 } else {
     window.location.href = "/";
 }
