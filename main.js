@@ -30,7 +30,7 @@ const parse = async (data) => {
                 busnr: nbus[5],
                 speed: nbus[4],
                 location: location,
-                mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
+                mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=T:${nbus[1]}`
             });
         } else if (nbus[0] == 2) {
             // boat
@@ -43,7 +43,7 @@ const parse = async (data) => {
                     busnr: nbus[5],
                     speed: nbus[4],
                     location: location,
-                    mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
+                    mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=L:${nbus[1]}`
                 });
             } else {
                 // bus
@@ -55,7 +55,7 @@ const parse = async (data) => {
                     busnr: nbus[5],
                     speed: nbus[4],
                     location: location,
-                    mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=${nbus[1]}`
+                    mapurl: `${window.location.origin}/map.html?lat=${nbus[3]}&long=${nbus[2]}&route=B:${nbus[1]}`
                 });
             }
 

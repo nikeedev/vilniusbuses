@@ -4,12 +4,19 @@ if (!window.location.href.includes("?")) {
     window.location.href = "/";
 }
 
-let lat, long, route;
+let lat, long, route, type;
 
 if (window.location.search.indexOf("lat") !== -1 && window.location.search.indexOf("long") !== -1 && window.location.search.indexOf("route") !== -1) {
     lat = parseInt(urlParams.get("lat")) / 1000000;
     long = parseInt(urlParams.get("long")) / 1000000;
-    route = parseInt(urlParams.get("route"));
+
+    let temp = urlParams.get("route").split(":");
+
+    // B, T or L (boat)
+    type = temp[0];
+
+    // route number
+    route = temp[1];
 } else {
     window.location.href = "/";
 }
@@ -27,7 +34,7 @@ async function initMap() {
     }).addTo(map);
 
     let marker = L.marker([lat, long]).addTo(map);
-    marker.bindPopup(`Route <b>${route}</b>`).openPopup();
+    marker.bindPopup(`${type == "B" ? "Bus" : type == "T" ? "Trolleybus" : "Boat"} route <b>${route}</b>`).openPopup();
 }
 
 initMap();
